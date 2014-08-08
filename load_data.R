@@ -1,6 +1,8 @@
 url <- 'https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip'
 zip_file <- 'hpc.zip'
 csv_file <- 'household_power_consumption.txt'
+# File to store the calculated data 
+#   Don't recalculate the data unless we have to: use save files
 bin_file <- 'data.bin'
 
 #
@@ -27,9 +29,12 @@ bin_file <- 'data.bin'
 #   20.444   0.151  20.708 
 #
 
+# Do only as much work as is needed
+#   If we have calculated our data before load it
 if (file.exists(bin_file)) {
 	load(bin_file)
 } else {
+	# Only download the csv file if we don't have it already
 	if (! file.exists(csv_file)) {
 		if (! file.exists(zip_file)) {
 			# curl probably won't work on Windows, internal won't download https on Mac :(
@@ -40,15 +45,18 @@ if (file.exists(bin_file)) {
 		unzip(zip_file)
 	}
 
+	# Go from CSV to data frame with the chosen strategy
 	raw_lines <- readLines("household_power_consumption.txt")
-
 	# Strip lines we won't use
 	filtered_lines <- grep("^([12]/2/2007|Date)", raw_lines, value=T, perl=T)
 	# Prepare string for read.table()
 	filtered_text <- paste(filtered_lines, collapse="\n")
 
 	data <- read.table(sep = ";", header = T, na.strings = "?", text = filtered_text)
+
+	# Annotate data with calculated datetime field
 	data$datetime <- strptime(paste(data$Date, data$Time, sep=" "), "%d/%m/%Y %H:%M:%S")
 
+	# Save calculated state for future runs
 	save(data, file = bin_file)
 }

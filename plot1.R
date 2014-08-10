@@ -1,3 +1,4 @@
+# Load data object
 source('load_data.R')
 
 # Plot 1

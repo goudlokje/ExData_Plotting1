@@ -1,3 +1,4 @@
+# Load data object
 source('load_data.R')
 
 # Set locale to english to match the x-axis tick labels

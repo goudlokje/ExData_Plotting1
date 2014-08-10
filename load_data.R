@@ -1,3 +1,4 @@
+data_dir <- 'data'
 url <- 'https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip'
 zip_file <- 'hpc.zip'
 csv_file <- 'household_power_consumption.txt'
@@ -28,6 +29,13 @@ bin_file <- 'data.bin'
 #     user  system elapsed 
 #   20.444   0.151  20.708 
 #
+
+if (!file.exists(data_dir)) {
+	dir.create(data_dir)
+}
+
+old_wd <- getwd()
+setwd(data_dir)
 
 # Do only as much work as is needed
 #   If we have calculated our data before load it
@@ -60,3 +68,5 @@ if (file.exists(bin_file)) {
 	# Save calculated state for future runs
 	save(data, file = bin_file)
 }
+
+setwd(old_wd)
